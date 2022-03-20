@@ -1,0 +1,52 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
+plugins {
+    id 'application'
+    id 'java'
+    id 'idea'
+    id 'org.beryx.jlink' version '2.23.1'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def currentOS = DefaultNativePlatform.currentOperatingSystem;
+def platform
+if (currentOS.isWindows()) {
+    platform = 'win'
+} else if (currentOS.isLinux()) {
+    platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+java {
+    modularity.inferModulePath = true
+}
+
+dependencies {
+    implementation "org.openjfx:javafx-base:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-controls:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-graphics:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-fxml:15.0.1:${platform}"
+}
+
+application {
+    mainModule = 'Notepad.main'
+    mainClass = 'com.notepad.NotepadMain'
+}
+
+jlink {
+    launcher {
+        name = 'Notepad'
+    }
+}
